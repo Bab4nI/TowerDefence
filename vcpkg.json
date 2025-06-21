@@ -1,0 +1,13 @@
+{
+  "name": "tower-defence",
+  "version": "0.0.1",
+  "description": "A university project: the implementation of a 2D tower defense game.",
+  "homepage": "https://github.com/Bab4nI/TowerDefense",
+  "builtin-baseline": "df6921c0b6cdf95269a4a3093e267b59e4bf0f5b",
+  "dependencies": [
+    {
+      "name": "sfml",
+      "version>=": "2.6.2"
+    }
+  ]
+}
