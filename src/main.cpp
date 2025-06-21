@@ -20,7 +20,7 @@ int main()
     sf::RenderWindow window(sf::VideoMode({1080, 1080}), "Tower Defense"); 
 
     sf::Texture BackgroundImage; 
-    if(!BackgroundImage.loadFromFile("assets\\images\\AI_generated_level.png"))
+    if(!BackgroundImage.loadFromFile("assets\\images\\white_square.png"))
         return EXIT_FAILURE;
     float coef = static_cast<float>(BackgroundImage.getSize().x);
     coef /= BackgroundImage.getSize().y;

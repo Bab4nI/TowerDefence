@@ -2,6 +2,9 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 
+// step == 0.01
+// model_len = 10
+
 /*
     All scores are recorded using a hardcode in the "points" vector, 
     and their number is guaranteed to be 3 * n + 1, where "n" is the number of segments.
@@ -9,17 +12,30 @@
 namespace Level {
 
     std::vector<sf::Vector2f> level1_points_Bezier = {
-        sf::Vector2f(1685, 1145),
-        sf::Vector2f(1360, 1095),
-        sf::Vector2f(1150, 1190),
-        sf::Vector2f(930, 1050),
-        sf::Vector2f(720, 900),
-        sf::Vector2f(890, 720),
-        sf::Vector2f(1030, 730)
+        sf::Vector2f(1080, 630),
+        sf::Vector2f(430, 870),
+        sf::Vector2f(490, 510),
+        sf::Vector2f(670, 460),
+
+        sf::Vector2f(870, 400),
+        sf::Vector2f(800, 165),
+        sf::Vector2f(480, 165),
+
+        sf::Vector2f(240, 170),
+        sf::Vector2f(130, 330),
+        sf::Vector2f(295, 405),
+
+        sf::Vector2f(450, 470),
+        sf::Vector2f(375, 580),
+        sf::Vector2f(260, 650),
+
+        sf::Vector2f(140, 710),
+        sf::Vector2f(130, 980),
+        sf::Vector2f(780, 940)
     };
 
     Level::Level(std::vector<sf::Vector2f> points_Bezier, unsigned num){
-        route = route_calculation(points_Bezier),
+        route = route_calculation(points_Bezier);
         number = num;
     }
         
@@ -41,7 +57,10 @@ namespace Level {
     {
         std::vector<sf::Vector2f> curve;
 
+        sf::Vector2f prev_point = p0;
+        curve.push_back(prev_point);
 
+        float cur_len = 0;
         for (float t = 0.f; t <= 1.f; t += step) {
             float u = 1.f - t;
             float uu = u * u;
@@ -56,7 +75,14 @@ namespace Level {
                 3.f * u * tt * p2 +
                 ttt * p3;
 
-            curve.push_back(point);
+            float dx = point.x - prev_point.x;
+            float dy = point.y - prev_point.y;
+            cur_len += std::sqrt(dx * dx + dy * dy);
+
+            if (cur_len >= model_len){
+                curve.push_back(point);
+                cur_len = 0;
+            }       
         }
 
         if (curve.back() != p3)

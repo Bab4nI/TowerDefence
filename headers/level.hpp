@@ -3,7 +3,8 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
-#define step 0.1
+#define step 0.01
+#define model_len 10
 
 namespace Level {
     extern std::vector<sf::Vector2f> level1_points_Bezier;
