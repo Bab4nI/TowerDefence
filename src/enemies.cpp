@@ -63,7 +63,7 @@ Enemy::~Enemy() {}
 
 Goblin::Goblin(){
     speed = 1;
-    health = 10;
+    health = 2;
     damage = 1;
     damage_interval = 1.0f;
     if(!texture.loadFromFile("assets\\images\\goblin_100.png"))
