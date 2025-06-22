@@ -23,22 +23,26 @@ namespace Level {
 
     class Level {
     public:
-        Level(std::vector<sf::Vector2f> points_Bezier, unsigned num, int castle_hp);
+        Level(std::vector<sf::Vector2f> points_Bezier, std::vector<sf::Vector2f> points, unsigned num, int castle_hp);
 
         // The second value indicates whether an enemy 
         //  has reached the end of the route
         std::pair<sf::Vector2f, bool> get_cords(int cur_step);
         int get_route_length();
+        int get_road_length();
         bool damage_the_castle(int damage);
 
         Castle castle;
 
         std::vector<sf::Vector2f> route;
+        std::vector<std::pair<sf::Vector2f, sf::Vector2f>> road; 
         unsigned number;
 
-    private:         
-        std::vector<sf::Vector2f> computeBezierCurve(const sf::Vector2f&, const sf::Vector2f&, const sf::Vector2f&, const sf::Vector2f&);
-        std::vector<sf::Vector2f> route_calculation(std::vector<sf::Vector2f>);
+    private:
+        int road_width;
+        std::vector<sf::Vector2f> points;         
+        void compute_bezier_curve();
+       // void route_calculation(std::vector<sf::Vector2f>);
     };
 }
 

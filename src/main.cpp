@@ -7,14 +7,26 @@
 
 int main()
 {
-    Level::Level level1(Level::level1_points_Bezier, 1, castle_hp);
+    Level::Level level1(Level::level1_points_Bezier, Level::level1_points_Bezier, 1, castle_hp);
 
     // Convert the route to a vertex array so that it can be drawn using SFML.
-    sf::VertexArray routeLine(sf::LineStrip, level1.get_route_length());
+    sf::VertexArray route_line(sf::LineStrip, level1.get_route_length());
+    
     for (std::size_t i = 0; i < level1.get_route_length(); ++i)
     {
-        routeLine[i].position = level1.get_cords(i).first;
-        routeLine[i].color = sf::Color::Black;
+        route_line[i].position = level1.route[i];
+        route_line[i].color = sf::Color::Green;
+    }
+
+    sf::VertexArray left_road_line(sf::LineStrip, level1.get_road_length());
+    sf::VertexArray right_road_line(sf::LineStrip, level1.get_road_length());
+    for (std::size_t i = 0; i < level1.get_road_length(); ++i)
+    {
+
+        left_road_line[i].position = level1.road[i].first;
+        right_road_line[i].position = level1.road[i].second;
+        left_road_line[i].color = sf::Color::Black;
+        right_road_line[i].color = sf::Color::Black;
     }
 
     sf::RenderWindow window(sf::VideoMode({1024, 1024}), "Tower Defense"); 
@@ -101,7 +113,6 @@ int main()
                 window_size = window.getSize();
                 window_size.x = window_size.y * coef;
                 window.setSize(window_size);
-                //shop_panel.setSize(sf::Vector2f(window_size.x, 120.f));
             }
             else if (event.type == sf::Event::MouseButtonPressed){
                 if(event.mouseButton.button == sf::Mouse::Left){
@@ -160,7 +171,9 @@ int main()
             window.draw(BckgSprite);
 
             //----------------------------
-            window.draw(routeLine);
+            window.draw(route_line);
+            window.draw(left_road_line);
+            window.draw(right_road_line);
             //-------------------------
 
             for(Enemies::Enemy* enemy : enemies){

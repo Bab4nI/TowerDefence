@@ -48,91 +48,119 @@ namespace Level {
         Here the initialization list is specifically used, 
             because of the field needs to be initialized as a class object.
     */
-    Level::Level(std::vector<sf::Vector2f> points_Bezier, unsigned num, int castle_hp) :
-        route(route_calculation(points_Bezier)),
+    Level::Level(std::vector<sf::Vector2f> points_Bezier, std::vector<sf::Vector2f> _points, unsigned num, int castle_hp) :      
         number(num),
-        castle(castle_hp)
-    {}
+        castle(castle_hp),
+        points(_points)
+    {
+        compute_bezier_curve();
+    }
     
     bool Level::damage_the_castle(int damage){
         return castle.deal_damage(damage);
     }
 
     std::pair<sf::Vector2f, bool> Level::get_cords(int cur_step) {
-    if (cur_step < static_cast<int>(route.size())) {
-        return std::make_pair(route[cur_step], false);
-    } else {
-        return std::make_pair(route.back(), true);
+        if (cur_step <static_cast<int>(route.size())) {
+            return std::make_pair(route[cur_step], false);
+        } 
+        else {
+            return std::make_pair(route.back(), true);
+        }
     }
-}
 
-
+    
     int Level::get_route_length(){
         return route.size();
     }
     
-    std::vector<sf::Vector2f> Level::computeBezierCurve(
-        const sf::Vector2f& p0,
-        const sf::Vector2f& p1,
-        const sf::Vector2f& p2,
-        const sf::Vector2f& p3
-        )
-    {
-        std::vector<sf::Vector2f> curve;
-
-        sf::Vector2f prev_point = p0;
-        curve.push_back(prev_point);
-
-        float cur_len = 0;
-        for (float t = 0.f; t <= 1.f; t += step) {
-            float u = 1.f - t;
-            float uu = u * u;
-            float uuu = uu * u;
-
-            float tt = t * t;
-            float ttt = tt * t;
-
-            sf::Vector2f point =
-                uuu * p0 +
-                3.f * uu * t * p1 +
-                3.f * u * tt * p2 +
-                ttt * p3;
-
-            float dx = point.x - prev_point.x;
-            float dy = point.y - prev_point.y;
-            cur_len += std::sqrt(dx * dx + dy * dy);
-
-            if (cur_len >= model_len){
-                curve.push_back(point);
-                cur_len = 0;
-                prev_point = point;
-            }
-
-            
-        }
-
-        if (curve.back() != p3)
-            curve.push_back(p3);
-
-        return curve;
+    int Level::get_road_length(){
+        return road.size();
     }
-
-    std::vector<sf::Vector2f> Level::route_calculation(std::vector<sf::Vector2f> points){
-        std::vector<sf::Vector2f> route;
+    
+    void Level::compute_bezier_curve()
+    {
         int length = points.size();
 
         for(int i = 0; i < length - 1; i+=3){
-            sf::Vector2f p1 = points[i];
-            sf::Vector2f p2 = points[i + 1];
-            sf::Vector2f p3 = points[i + 2];
-            sf::Vector2f p4 = points[i + 3];
+            sf::Vector2f p0 = points[i];
+            sf::Vector2f p1 = points[i + 1];
+            sf::Vector2f p2 = points[i + 2];
+            sf::Vector2f p3 = points[i + 3];
 
-            std::vector<sf::Vector2f> seg = computeBezierCurve(p1, p2, p3, p4);
-            route.insert(route.end(), seg.begin(), seg.end());
-        }
+            std::vector<sf::Vector2f> curve;
+            std::vector<std::pair<sf::Vector2f,sf::Vector2f>> road_part;
 
-        return route;
+            sf::Vector2f prev_point = p0;
+            curve.push_back(prev_point);
+
+            float cur_len = 0;
+            for (float t = 0.f; t <= 1.f; t += step) {
+                float u = 1.f - t;
+                float uu = u * u;
+                float uuu = uu * u;
+
+                float tt = t * t;
+                float ttt = tt * t;
+
+                sf::Vector2f point =
+                    uuu * p0 +
+                    3.f * uu * t * p1 +
+                    3.f * u * tt * p2 +
+                    ttt * p3;
+
+                float dx = point.x - prev_point.x;
+                float dy = point.y - prev_point.y;
+                cur_len += std::sqrt(dx * dx + dy * dy);
+
+                if (cur_len >= model_len){ 
+                    // derivative calculation
+                    float u = 1.f - t;
+
+                    sf::Vector2f term1 = 3.f * u * u * (p1 - p0);
+                    sf::Vector2f term2 = 6.f * u * t * (p2 - p1);
+                    sf::Vector2f term3 = 3.f * t * t * (p3 - p2);
+
+                    sf::Vector2f tangent = term1 + term2 + term3;
+
+                    float length = std::sqrt(tangent.x * tangent.x + tangent.y * tangent.y);
+                    if (length != 0) {
+                        tangent.x /= length;
+                        tangent.y /= length;
+                    }
+
+                    sf::Vector2f left_normal(-tangent.x * road_width, tangent.y * road_width);
+                    sf::Vector2f right_normal(tangent.x * road_width, -tangent.y * road_width);
+
+                    road_part.push_back(std::make_pair(left_normal, right_normal));
+
+                    curve.push_back(point);
+                    cur_len = 0;
+                    prev_point = point;
+                }
+            }
+
+            if (curve.back() != p3)
+                curve.push_back(p3);
+
+            route.insert(route.end(), curve.begin(), curve.end());
+            road.insert(road.end(), road_part.begin(), road_part.end());
+        }     
     }
+
+    // void Level::route_calculation(std::vector<sf::Vector2f> points){
+    //     int length = points.size();
+
+    //     for(int i = 0; i < length - 1; i+=3){
+    //         sf::Vector2f p1 = points[i];
+    //         sf::Vector2f p2 = points[i + 1];
+    //         sf::Vector2f p3 = points[i + 2];
+    //         sf::Vector2f p4 = points[i + 3];
+
+    //         std::vector<sf::Vector2f> seg = computeBezierCurve(p1, p2, p3, p4);
+    //         route.insert(route.end(), seg.begin(), seg.end());
+    //     }
+    // }
 }; // namespace Level
 
 
