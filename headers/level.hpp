@@ -23,7 +23,7 @@ namespace Level {
 
     class Level {
     public:
-        Level(std::vector<sf::Vector2f> points_Bezier, std::vector<sf::Vector2f> points, unsigned num, int castle_hp);
+        Level(std::vector<sf::Vector2f> points_Bezier, std::vector<sf::Vector2f> points, unsigned num, int castle_hp, int road_width);
 
         // The second value indicates whether an enemy 
         //  has reached the end of the route

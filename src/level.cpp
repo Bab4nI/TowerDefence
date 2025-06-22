@@ -48,7 +48,8 @@ namespace Level {
         Here the initialization list is specifically used, 
             because of the field needs to be initialized as a class object.
     */
-    Level::Level(std::vector<sf::Vector2f> points_Bezier, std::vector<sf::Vector2f> _points, unsigned num, int castle_hp) :      
+    Level::Level(std::vector<sf::Vector2f> points_Bezier, std::vector<sf::Vector2f> _points, unsigned num, int castle_hp, int _road_width) :      
+        road_width(_road_width),
         number(num),
         castle(castle_hp),
         points(_points)
@@ -69,7 +70,7 @@ namespace Level {
         }
     }
 
-    
+
     int Level::get_route_length(){
         return route.size();
     }
@@ -129,8 +130,8 @@ namespace Level {
                         tangent.y /= length;
                     }
 
-                    sf::Vector2f left_normal(-tangent.x * road_width, tangent.y * road_width);
-                    sf::Vector2f right_normal(tangent.x * road_width, -tangent.y * road_width);
+                    sf::Vector2f left_normal = point + sf::Vector2f(-tangent.y * road_width, tangent.x * road_width);
+                    sf::Vector2f right_normal = point + sf::Vector2f(tangent.y * road_width, -tangent.x * road_width);
 
                     road_part.push_back(std::make_pair(left_normal, right_normal));
 

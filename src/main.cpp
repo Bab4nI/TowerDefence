@@ -4,10 +4,11 @@
 #include "towers.hpp"
 
 #define castle_hp 10
+#define road_width 30
 
 int main()
 {
-    Level::Level level1(Level::level1_points_Bezier, Level::level1_points_Bezier, 1, castle_hp);
+    Level::Level level1(Level::level1_points_Bezier, Level::level1_points_Bezier, 1, castle_hp, road_width);
 
     // Convert the route to a vertex array so that it can be drawn using SFML.
     sf::VertexArray route_line(sf::LineStrip, level1.get_route_length());
