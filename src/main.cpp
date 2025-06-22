@@ -101,7 +101,7 @@ int main()
                 window_size = window.getSize();
                 window_size.x = window_size.y * coef;
                 window.setSize(window_size);
-                shop_panel.setSize(sf::Vector2f(window_size.x, 120.f));
+                //shop_panel.setSize(sf::Vector2f(window_size.x, 120.f));
             }
             else if (event.type == sf::Event::MouseButtonPressed){
                 if(event.mouseButton.button == sf::Mouse::Left){
