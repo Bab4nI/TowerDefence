@@ -76,6 +76,20 @@ int main()
     towers.push_back(new Towers::Cannon(test_cords));
     // ----------------------------------------
 
+
+    sf::RectangleShape shop_panel;
+    shop_panel.setFillColor(sf::Color(0, 0, 0, 150));
+    shop_panel.setSize(sf::Vector2f(window.getSize().x, 120.f));
+
+    sf::Texture cannon_icon_texture;
+    if(!cannon_icon_texture.loadFromFile("assets\\images\\cannon_100.png"))
+        return EXIT_FAILURE;
+    sf::Sprite cannon_icon(cannon_icon_texture);
+    cannon_icon.setPosition(10.f, 10.f);
+
+    bool build_mode = false;
+    sf::Sprite build_sprite;
+
     while (window.isOpen())
     {
         sf::Event event;
@@ -87,8 +101,32 @@ int main()
                 window_size = window.getSize();
                 window_size.x = window_size.y * coef;
                 window.setSize(window_size);
+                shop_panel.setSize(sf::Vector2f(window_size.x, 120.f));
+            }
+            else if (event.type == sf::Event::MouseButtonPressed){
+                if(event.mouseButton.button == sf::Mouse::Left){
+                    sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+                    if(build_mode){
+                        towers.push_back(new Towers::Cannon(mousePos));
+                        build_mode = false;
+                    }else if(cannon_icon.getGlobalBounds().contains(mousePos)){
+                        build_mode = true;
+                        build_sprite.setTexture(cannon_icon_texture);
+                        build_sprite.setOrigin(cannon_icon_texture.getSize().x / 2.f, cannon_icon_texture.getSize().y / 2.f);
+                    }
+                }
+                else if(event.mouseButton.button == sf::Mouse::Right){
+                    build_mode = false;
+                }
+            }
+            else if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape){
+                build_mode = false;
             }
         }
+        if(build_mode){
+            build_sprite.setPosition(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+        }
+
         if(!castle_is_destroyed){
             if (spawn_clock.getElapsedTime().asSeconds() >= spawn_interval){
                 enemies.push_back(new Enemies::Goblin());
@@ -127,14 +165,22 @@ int main()
 
             for(Enemies::Enemy* enemy : enemies){
                 window.draw(enemy->get_sprite());
+                window.draw(enemy->get_health_bar());
             }
 
             for(Towers::Tower* tower : towers){
                 window.draw(tower->get_sprite());
             }
 
-            window.draw(castle_hp_text);                    
-        }  
+            if(build_mode){
+                window.draw(build_sprite);
+            }
+
+            window.draw(shop_panel);
+            window.draw(cannon_icon);
+
+            window.draw(castle_hp_text);
+        }
 
         window.display(); 
     }

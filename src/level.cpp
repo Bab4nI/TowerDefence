@@ -2,9 +2,6 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 
-// step == 0.001f
-// model_len = 20
-
 /*
     All scores are recorded using a hardcode in the "points" vector, 
     and their number is guaranteed to be 3 * n + 1, where "n" is the number of segments.

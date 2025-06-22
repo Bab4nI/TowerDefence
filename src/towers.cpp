@@ -10,7 +10,7 @@ Tower::Tower(sf::Vector2f crds){
 void Tower::tick(std::vector<Enemies::Enemy*>& enemies){
     float dx, dy, sqared_dist;
     bool fired = false;
-    for(int i = 0; i < enemies.size() & (damage_clock.getElapsedTime().asSeconds() >= damage_interval);){
+    for(int i = 0; i < enemies.size() && (damage_clock.getElapsedTime().asSeconds() >= damage_interval);){
         Enemies::Enemy* e = enemies[i];
         sf::Vector2f e_cords = e->get_cords();
 

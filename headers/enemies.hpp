@@ -17,6 +17,8 @@ namespace Enemies{
 
         int get_health();
 
+        int get_max_health();
+
         int get_step();
 
         int get_damage();
@@ -24,6 +26,10 @@ namespace Enemies{
         sf::Vector2f get_cords();
 
         sf::Sprite get_sprite();
+
+        sf::RectangleShape get_health_bar();
+
+        void update_health_bar();
 
         virtual bool health_decrease(int hp) = 0;
 
@@ -34,11 +40,13 @@ namespace Enemies{
         int health;
         int cur_step;
         int damage;
+        int max_health;
         float damage_interval;
         sf::Clock damage_clock;
         sf::Vector2f cords;
         sf::Texture texture;
         sf::Sprite sprite;
+        sf::RectangleShape health_bar;
 
         void set_cords(sf::Vector2f crds); 
         void move();
@@ -50,4 +58,3 @@ namespace Enemies{
         bool health_decrease(int hp) override;
     };
 } // namespace Enemies
-

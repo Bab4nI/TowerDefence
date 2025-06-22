@@ -6,6 +6,7 @@ using namespace Enemies;
 
 Enemy::Enemy(){
     cur_step = 0;
+    max_health = 0;
 };
 
 bool Enemy::tick(Level::Level& level){
@@ -16,9 +17,10 @@ bool Enemy::tick(Level::Level& level){
             damage_clock.restart();
             if(level.damage_the_castle(damage))
                 return 1;
-        }   
+        }
     }
     set_cords(res.first);
+    update_health_bar();
     return 0;
 }
 
@@ -42,6 +44,26 @@ sf::Sprite Enemy::get_sprite(){
     return sprite;
 }
 
+sf::RectangleShape Enemy::get_health_bar(){
+    return health_bar;
+}
+
+int Enemy::get_max_health(){
+    return max_health;
+}
+
+void Enemy::update_health_bar(){
+    if(max_health){
+        float percentage = static_cast<float>(health) / static_cast<float>(max_health);
+        float width = sprite.getGlobalBounds().width;
+        float height = 5.f;
+        health_bar.setSize(sf::Vector2f(width * percentage, height));
+        health_bar.setFillColor(percentage < 0.3f ? sf::Color::Red : sf::Color::Green);
+        health_bar.setOrigin(width / 2.f, height / 2.f);
+        health_bar.setPosition(cords.x, cords.y - sprite.getGlobalBounds().height / 2.f - 10.f);
+    }
+}
+
 void Enemy::set_cords(sf::Vector2f crds){
     cords = crds;
     sprite.setPosition(crds);
@@ -58,12 +80,14 @@ int Enemy::get_damage(){
 sf::Vector2f Enemy::get_cords(){
     return cords;
 };
+
 // virtual base class destructor
 Enemy::~Enemy() {}
 
 Goblin::Goblin(){
     speed = 1;
-    health = 2;
+    health = 5;
+    max_health = health;
     damage = 1;
     damage_interval = 1.0f;
     if(!texture.loadFromFile("assets\\images\\goblin_100.png"))
@@ -71,14 +95,15 @@ Goblin::Goblin(){
     else{
         sprite = sf::Sprite(texture);
         sprite.setOrigin(sf::Vector2f(50, 50));
+        // health_bar.setSize(sf::Vector2f(sprite.getGlobalBounds().width, 5.f));
+        // health_bar.setFillColor(sf::Color::Green);
+        // health_bar.setOrigin(health_bar.getSize().x / 2.f, health_bar.getSize().y / 2.f);
+        update_health_bar();
     }
 }
 
 bool Goblin::health_decrease(int hp) {
     health -= hp;
-    return(health < 0);
+    update_health_bar();
+    return(health <= 0);
 }
-
-
-
-
