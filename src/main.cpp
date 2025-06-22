@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include "level.hpp"
+#include "enemies.hpp"
 
 int main()
 {
@@ -31,6 +32,12 @@ int main()
     BckgSprite.setScale(coef_to_resize, coef_to_resize);
 
     sf::Vector2u cur_size, prev_size = window.getSize(), window_size;
+
+    sf::Clock spawn_clock, move_clock;
+    float spawn_interval = 10.0f, move_interval = 0.1f;
+
+    std::vector<Enemies::Enemy*> enemies;
+
     while (window.isOpen())
     {
         sf::Event event;
@@ -45,7 +52,24 @@ int main()
             }
         }
 
+        if (spawn_clock.getElapsedTime().asSeconds() >= spawn_interval){
+            enemies.push_back(new Enemies::Goblin());
+            spawn_clock.restart();
+        }
+        if(move_clock.getElapsedTime().asSeconds() >= move_interval){
+            for(Enemies::Enemy* enemy : enemies){
+                enemy->move();
+            }
+        }
+
         window.clear();
+
+        for(Enemies::Enemy* enemy : enemies){
+            sf::Vector2f cords = level1.get_cords(enemy->get_step());
+            enemy->set_cords(cords);
+            window.draw(enemy->get_sprite());
+        }
+
         window.draw(BckgSprite);
         //----------------------------
         window.draw(routeLine);
