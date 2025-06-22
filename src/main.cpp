@@ -1,15 +1,12 @@
 #include <SFML/Graphics.hpp>
 #include "level.hpp"
 #include "enemies.hpp"
+#include "towers.hpp"
 
 #define castle_hp 10
 
 int main()
 {
-    //-----------------------------------------------------------------------------
-    // Example route
-    //-----------------------------------------------------------------------------
-
     Level::Level level1(Level::level1_points_Bezier, 1, castle_hp);
 
     // Convert the route to a vertex array so that it can be drawn using SFML.
@@ -69,6 +66,16 @@ int main()
     sf::Sprite defeat_sprite = sf::Sprite(defeat_screen);
     defeat_sprite.setColor(sf::Color(50, 0, 0, 128)); // 128 -> ~50% opacity
     
+    // 660 630
+    // 670 370
+    std::vector<Towers::Tower*> towers;
+    // --------- hardcode for test ------------
+    sf::Vector2f test_cords = sf::Vector2f(660, 630);
+    towers.push_back(new Towers::Cannon(test_cords));
+    test_cords = sf::Vector2f(670, 370);
+    towers.push_back(new Towers::Cannon(test_cords));
+    // ----------------------------------------
+
     while (window.isOpen())
     {
         sf::Event event;
@@ -92,6 +99,10 @@ int main()
                     castle_is_destroyed = enemy->tick(level1);
                 }
                 move_clock.restart();
+
+                for(Towers::Tower* tower : towers){
+                    tower->tick(enemies);
+                }
             }
         }
 
@@ -116,6 +127,10 @@ int main()
 
             for(Enemies::Enemy* enemy : enemies){
                 window.draw(enemy->get_sprite());
+            }
+
+            for(Towers::Tower* tower : towers){
+                window.draw(tower->get_sprite());
             }
 
             window.draw(castle_hp_text);                    

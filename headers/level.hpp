@@ -4,7 +4,7 @@
 #include <vector>
 
 #define step 0.001f
-#define model_len 10
+#define model_len 3
 
 namespace Level {
 
@@ -33,10 +33,10 @@ namespace Level {
 
         Castle castle;
 
-    private:
         std::vector<sf::Vector2f> route;
         unsigned number;
 
+    private:         
         std::vector<sf::Vector2f> computeBezierCurve(const sf::Vector2f&, const sf::Vector2f&, const sf::Vector2f&, const sf::Vector2f&);
         std::vector<sf::Vector2f> route_calculation(std::vector<sf::Vector2f>);
     };

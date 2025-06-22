@@ -55,6 +55,9 @@ int Enemy::get_damage(){
     return damage;
 }
 
+sf::Vector2f Enemy::get_cords(){
+    return cords;
+};
 // virtual base class destructor
 Enemy::~Enemy() {}
 
@@ -73,7 +76,7 @@ Goblin::Goblin(){
 
 bool Goblin::health_decrease(int hp) {
     health -= hp;
-    return(health > 0);
+    return(health < 0);
 }
 
 

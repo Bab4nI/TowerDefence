@@ -21,6 +21,8 @@ namespace Enemies{
 
         int get_damage();
 
+        sf::Vector2f get_cords();
+
         sf::Sprite get_sprite();
 
         virtual bool health_decrease(int hp) = 0;
