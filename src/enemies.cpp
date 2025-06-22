@@ -43,10 +43,12 @@ Goblin::Goblin(){
     speed = 1;
     health = 10;
     damage = 1;
-    if(!texture.loadFromFile("assets\\images\\goblin.png"))
+    if(!texture.loadFromFile("assets\\images\\goblin_100.png"))
             throw std::runtime_error("Failed to load goblin texture.");
-    else
-        sprite = sf::Sprite(texture); 
+    else{
+        sprite = sf::Sprite(texture);
+        sprite.setOrigin(sf::Vector2f(50, 50));
+    }
 }
 
 bool Goblin::health_decrease(int hp) {

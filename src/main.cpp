@@ -14,7 +14,7 @@ int main()
     sf::VertexArray routeLine(sf::LineStrip, level1.get_route_length());
     for (std::size_t i = 0; i < level1.get_route_length(); ++i)
     {
-        routeLine[i].position = level1.get_cords(i);
+        routeLine[i].position = level1.get_cords(i).first;
         routeLine[i].color = sf::Color::Black;
     }
 
@@ -34,7 +34,7 @@ int main()
     sf::Vector2u cur_size, prev_size = window.getSize(), window_size;
 
     sf::Clock spawn_clock, move_clock;
-    float spawn_interval = 10.0f, move_interval = 0.1f;
+    float spawn_interval = 10.0f, move_interval = 0.01f;
 
     std::vector<Enemies::Enemy*> enemies;
 
@@ -60,20 +60,29 @@ int main()
             for(Enemies::Enemy* enemy : enemies){
                 enemy->move();
             }
+            move_clock.restart();
         }
 
         window.clear();
 
-        for(Enemies::Enemy* enemy : enemies){
-            sf::Vector2f cords = level1.get_cords(enemy->get_step());
-            enemy->set_cords(cords);
-            window.draw(enemy->get_sprite());
-        }
-
         window.draw(BckgSprite);
+
         //----------------------------
         window.draw(routeLine);
         //-------------------------
+
+        for(Enemies::Enemy* enemy : enemies){
+            std::pair<sf::Vector2f, bool> result = level1.get_cords(enemy->get_step());
+            
+            // Has the enemy reached the end of the route
+            if(result.second){
+                // !--- damage logic ----!
+            }
+            enemy->set_cords(result.first);
+            sf::Sprite sprite= enemy->get_sprite();
+            window.draw(sprite);
+        }
+
         window.display();
         
     }

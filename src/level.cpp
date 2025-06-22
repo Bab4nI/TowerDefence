@@ -2,8 +2,8 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 
-// step == 0.01
-// model_len = 10
+// step == 0.001f
+// model_len = 20
 
 /*
     All scores are recorded using a hardcode in the "points" vector, 
@@ -40,9 +40,14 @@ namespace Level {
     }
         
 
-    sf::Vector2f Level::get_cords(int cur_step){
-        return route[cur_step];
+    std::pair<sf::Vector2f, bool> Level::get_cords(int cur_step) {
+    if (cur_step < static_cast<int>(route.size())) {
+        return std::make_pair(route[cur_step], false);
+    } else {
+        return std::make_pair(route.back(), true);
     }
+}
+
 
     int Level::get_route_length(){
         return route.size();
@@ -82,7 +87,10 @@ namespace Level {
             if (cur_len >= model_len){
                 curve.push_back(point);
                 cur_len = 0;
-            }       
+                prev_point = point;
+            }
+
+            
         }
 
         if (curve.back() != p3)
