@@ -31,7 +31,8 @@ namespace Level {
         int get_route_length();
         int get_road_length();
         bool damage_the_castle(int damage);
-
+        bool is_build_allowed(sf::Vector2f pos) const;
+        
         Castle castle;
 
         std::vector<sf::Vector2f> route;

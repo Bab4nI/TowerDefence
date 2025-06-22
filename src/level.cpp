@@ -54,10 +54,19 @@ namespace Level {
         castle(castle_hp),
         points(_points)
     {
-        compute_bezier_curve();
         build_ban_map.resize(1024, std::vector<bool>(1024, true));
+        compute_bezier_curve();
     }
     
+    bool Level::is_build_allowed(sf::Vector2f pos) const{
+        int x = static_cast<int>(std::round(pos.x));
+        int y = static_cast<int>(std::round(pos.y));
+        if (x < 0 || x >= static_cast<int>(build_ban_map[0].size()) ||
+            y < 0 || y >= static_cast<int>(build_ban_map.size()))
+            return false;
+        return build_ban_map[y][x];
+    }
+
     bool Level::damage_the_castle(int damage){
         return castle.deal_damage(damage);
     }

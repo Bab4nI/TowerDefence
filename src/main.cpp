@@ -30,7 +30,9 @@ int main()
         right_road_line[i].color = sf::Color::Black;
     }
 
-    sf::RenderWindow window(sf::VideoMode({1024, 1024}), "Tower Defense"); 
+    sf::RenderWindow window(sf::VideoMode({1024, 1024}),
+                        "Tower Defense",
+                        sf::Style::Titlebar | sf::Style::Close);
 
     sf::Texture BackgroundImage; 
     if(!BackgroundImage.loadFromFile("assets\\images\\white_square.png"))
@@ -110,17 +112,19 @@ int main()
         {
             if (event.type == sf::Event::Closed)
                 window.close();
-            else if (event.type == sf::Event::Resized){
-                window_size = window.getSize();
-                window_size.x = window_size.y * coef;
-                window.setSize(window_size);
-            }
+            // else if (event.type == sf::Event::Resized){
+            //     window_size = window.getSize();
+            //     window_size.x = window_size.y * coef;
+            //     window.setSize(window_size);
+            // }
             else if (event.type == sf::Event::MouseButtonPressed){
                 if(event.mouseButton.button == sf::Mouse::Left){
                     sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
                     if(build_mode){
-                        towers.push_back(new Towers::Cannon(mousePos));
-                        build_mode = false;
+                        if(level1.is_build_allowed(mousePos)){
+                            towers.push_back(new Towers::Cannon(mousePos));
+                            build_mode = false;
+                        }
                     }else if(cannon_icon.getGlobalBounds().contains(mousePos)){
                         build_mode = true;
                         build_sprite.setTexture(cannon_icon_texture);
@@ -136,7 +140,13 @@ int main()
             }
         }
         if(build_mode){
-            build_sprite.setPosition(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+            sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+            build_sprite.setPosition(mousePos);
+            if(level1.is_build_allowed(mousePos)){
+                build_sprite.setColor(sf::Color::White);
+            }else{
+                build_sprite.setColor(sf::Color(255, 128, 128));
+            }
         }
 
         if(!castle_is_destroyed){
