@@ -93,19 +93,23 @@ namespace Level {
     {
         int length = points.size();
 
-        for(int i = 0; i < length - 1; i+=3){
+        for (int i = 0; i < length - 1; i += 3) {
             sf::Vector2f p0 = points[i];
             sf::Vector2f p1 = points[i + 1];
             sf::Vector2f p2 = points[i + 2];
             sf::Vector2f p3 = points[i + 3];
 
             std::vector<sf::Vector2f> curve;
-            std::vector<std::pair<sf::Vector2f,sf::Vector2f>> road_part;
+            std::vector<std::pair<sf::Vector2f, sf::Vector2f>> road_part;
 
             sf::Vector2f prev_point = p0;
             curve.push_back(prev_point);
 
             float cur_len = 0;
+
+            sf::Vector2f prev_left, prev_right;
+            bool has_prev_normals = false;
+
             for (float t = 0.f; t <= 1.f; t += step) {
                 float u = 1.f - t;
                 float uu = u * u;
@@ -124,40 +128,47 @@ namespace Level {
                 float dy = point.y - prev_point.y;
                 cur_len += std::sqrt(dx * dx + dy * dy);
 
-                if (cur_len >= model_len){ 
-                    // derivative calculation
+                if (cur_len >= model_len) {
+
                     float u = 1.f - t;
+                    sf::Vector2f tangent =
+                        3.f * u * u * (p1 - p0) +
+                        6.f * u * t * (p2 - p1) +
+                        3.f * t * t * (p3 - p2);
 
-                    sf::Vector2f term1 = 3.f * u * u * (p1 - p0);
-                    sf::Vector2f term2 = 6.f * u * t * (p2 - p1);
-                    sf::Vector2f term3 = 3.f * t * t * (p3 - p2);
-
-                    sf::Vector2f tangent = term1 + term2 + term3;
-
-                    float length = std::sqrt(tangent.x * tangent.x + tangent.y * tangent.y);
-                    if (length != 0) {
-                        tangent.x /= length;
-                        tangent.y /= length;
-                    }
+                    float len = std::sqrt(tangent.x * tangent.x + tangent.y * tangent.y);
+                    if (len != 0.f) tangent /= len;
 
                     sf::Vector2f left_normal = point + sf::Vector2f(-tangent.y * road_width, tangent.x * road_width);
                     sf::Vector2f right_normal = point + sf::Vector2f(tangent.y * road_width, -tangent.x * road_width);
 
-                    road_part.push_back(std::make_pair(left_normal, right_normal));
+                    road_part.emplace_back(left_normal, right_normal);
 
-                    // calculation of build ban map
-                    int steps = static_cast<int>(std::hypot(right_normal.x - left_normal.x, right_normal.y - left_normal.y));
-                    for (int j = 0; j <= steps; ++j) {
-                        float t = static_cast<float>(j) / steps;
-                        sf::Vector2f between = left_normal + t * (right_normal - left_normal);
+                    if (has_prev_normals) {
+                        int samples = 20; 
+                        for (int j = 0; j <= samples; ++j) {
+                            float s = static_cast<float>(j) / samples;
 
-                        int x = static_cast<int>(std::round(between.x));
-                        int y = static_cast<int>(std::round(between.y));
+                            sf::Vector2f left_interp = prev_left + s * (left_normal - prev_left);
+                            sf::Vector2f right_interp = prev_right + s * (right_normal - prev_right);
 
-                        if (x >= 0 && x < 1024 && y >= 0 && y < 1024) {
-                            build_ban_map[y][x] = false;
+                            int inner_steps = static_cast<int>(std::hypot(right_interp.x - left_interp.x, right_interp.y - left_interp.y));
+                            for (int k = 0; k <= inner_steps; ++k) {
+                                float t = static_cast<float>(k) / inner_steps;
+                                sf::Vector2f p = left_interp + t * (right_interp - left_interp);
+
+                                int x = static_cast<int>(std::round(p.x));
+                                int y = static_cast<int>(std::round(p.y));
+                                if (x >= 0 && x < 1024 && y >= 0 && y < 1024) {
+                                    build_ban_map[y][x] = false;
+                                }
+                            }
                         }
                     }
+
+                    prev_left = left_normal;
+                    prev_right = right_normal;
+                    has_prev_normals = true;
 
                     curve.push_back(point);
                     cur_len = 0;
@@ -170,7 +181,7 @@ namespace Level {
 
             route.insert(route.end(), curve.begin(), curve.end());
             road.insert(road.end(), road_part.begin(), road_part.end());
-        }     
+        }
     }
 
     // void Level::route_calculation(std::vector<sf::Vector2f> points){
