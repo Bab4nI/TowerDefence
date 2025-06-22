@@ -8,27 +8,24 @@ Tower::Tower(sf::Vector2f crds){
 };
 
 void Tower::tick(std::vector<Enemies::Enemy*>& enemies){
-    if(damage_clock.getElapsedTime().asSeconds() >= damage_interval){
-        float dx, dy, sqared_dist;
-        bool fired = false;
-        for(int i = 0; i < enemies.size();){
-            Enemies::Enemy* e = enemies[i];
-            sf::Vector2f e_cords = e->get_cords();
+    float dx, dy, sqared_dist;
+    bool fired = false;
+    for(int i = 0; i < enemies.size() & (damage_clock.getElapsedTime().asSeconds() >= damage_interval);){
+        Enemies::Enemy* e = enemies[i];
+        sf::Vector2f e_cords = e->get_cords();
 
-            dx = e_cords.x - cords.x;
-            dy = e_cords.y - cords.y;
-            sqared_dist = (dx * dx + dy * dy);
-            if(sqared_dist <= range * range){
-                if(e->health_decrease(damage)){
-                    delete e;
-                    Enemies::Enemy*& e_ptr = e;
-                    enemies.erase(enemies.begin() + i);
-                    continue; // shifts aim when the enemy is killed  
-                }
-                damage_clock.restart();
+        dx = e_cords.x - cords.x;
+        dy = e_cords.y - cords.y;
+        sqared_dist = (dx * dx + dy * dy);
+        if(sqared_dist <= range * range){
+            if(e->health_decrease(damage)){
+                delete e;
+                enemies.erase(enemies.begin() + i);
+                continue; // shifts aim when the enemy is killed  
             }
-            i++;
-        }  
+            damage_clock.restart();
+        }
+        i++;  
     };
 }
 
@@ -41,7 +38,7 @@ Tower::~Tower(){}
 
 Cannon::Cannon(sf::Vector2f crds) : Tower(crds) 
 {
-    range = 30;
+    range = 200;
     damage = 2;
     damage_interval = 2;
 
