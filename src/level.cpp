@@ -11,6 +11,19 @@
 */
 namespace Level {
 
+    Castle::Castle(int hp){
+        health = hp;
+    }
+    
+    bool Castle::deal_damage(int damage){
+        health -= damage;
+        return health < 0;
+    }
+
+    int Castle::get_health(){
+        return health;
+    }
+    
     std::vector<sf::Vector2f> level1_points_Bezier = {
         sf::Vector2f(1080, 630),
         sf::Vector2f(430, 870),
@@ -34,11 +47,19 @@ namespace Level {
         sf::Vector2f(780, 940)
     };
 
-    Level::Level(std::vector<sf::Vector2f> points_Bezier, unsigned num){
-        route = route_calculation(points_Bezier);
-        number = num;
+    /*
+        Here the initialization list is specifically used, 
+            because of the field needs to be initialized as a class object.
+    */
+    Level::Level(std::vector<sf::Vector2f> points_Bezier, unsigned num, int castle_hp) :
+        route(route_calculation(points_Bezier)),
+        number(num),
+        castle(castle_hp)
+    {}
+    
+    bool Level::damage_the_castle(int damage){
+        return castle.deal_damage(damage);
     }
-        
 
     std::pair<sf::Vector2f, bool> Level::get_cords(int cur_step) {
     if (cur_step < static_cast<int>(route.size())) {

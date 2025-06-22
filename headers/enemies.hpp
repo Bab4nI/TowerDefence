@@ -1,5 +1,6 @@
 #pragma once
 
+#include "level.hpp"
 #include <SFML/Graphics.hpp>
 
 namespace Enemies{
@@ -7,6 +8,9 @@ namespace Enemies{
     class Enemy{
     public:
         Enemy();
+
+        bool tick(Level::Level& level);
+
         sf::Texture get_texture();
         
         int get_speed();
@@ -15,11 +19,9 @@ namespace Enemies{
 
         int get_step();
 
+        int get_damage();
+
         sf::Sprite get_sprite();
-
-        void move();
-
-        void set_cords(sf::Vector2f crds);  
 
         virtual bool health_decrease(int hp) = 0;
 
@@ -30,9 +32,14 @@ namespace Enemies{
         int health;
         int cur_step;
         int damage;
+        float damage_interval;
+        sf::Clock damage_clock;
         sf::Vector2f cords;
         sf::Texture texture;
         sf::Sprite sprite;
+
+        void set_cords(sf::Vector2f crds); 
+        void move();
     };
 
     class Goblin: public Enemy{
