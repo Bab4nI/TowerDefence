@@ -39,6 +39,7 @@ namespace Level {
         unsigned number;
 
     private:
+        std::vector<std::vector<bool>> build_ban_map;
         int road_width;
         std::vector<sf::Vector2f> points;         
         void compute_bezier_curve();

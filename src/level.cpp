@@ -55,6 +55,7 @@ namespace Level {
         points(_points)
     {
         compute_bezier_curve();
+        build_ban_map.resize(1024, std::vector<bool>(1024, true));
     }
     
     bool Level::damage_the_castle(int damage){
@@ -134,6 +135,20 @@ namespace Level {
                     sf::Vector2f right_normal = point + sf::Vector2f(tangent.y * road_width, -tangent.x * road_width);
 
                     road_part.push_back(std::make_pair(left_normal, right_normal));
+
+                    // calculation of build ban map
+                    int steps = static_cast<int>(std::hypot(right_normal.x - left_normal.x, right_normal.y - left_normal.y));
+                    for (int j = 0; j <= steps; ++j) {
+                        float t = static_cast<float>(j) / steps;
+                        sf::Vector2f between = left_normal + t * (right_normal - left_normal);
+
+                        int x = static_cast<int>(std::round(between.x));
+                        int y = static_cast<int>(std::round(between.y));
+
+                        if (x >= 0 && x < 1024 && y >= 0 && y < 1024) {
+                            build_ban_map[y][x] = false;
+                        }
+                    }
 
                     curve.push_back(point);
                     cur_len = 0;
