@@ -200,14 +200,17 @@ int main()
             for (auto* e : enemies) { window.draw(e->get_sprite()); window.draw(e->get_health_bar()); }
             for (auto* t : towers) window.draw(t->get_sprite());
             window.draw(level1.castle.get_sprite());
+            window.draw(level1.castle.get_health_bar());
             if (buildMode) window.draw(buildSprite);
             window.draw(shopPanel); window.draw(cannonIcon); window.draw(archerIcon); window.draw(wizardIcon);
 
             int hp = level1.castle.get_health();
             castleHpText.setString(std::to_string(hp) + " HP");
             auto bounds = castleHpText.getLocalBounds();
-            castleHpText.setOrigin(bounds.left + bounds.width, bounds.top + bounds.height);
-            castleHpText.setPosition(window.getSize().x - 5.f, window.getSize().y - 5.f);
+            castleHpText.setOrigin(bounds.left + bounds.width / 2.f, bounds.top + bounds.height / 2.f);
+            sf::RectangleShape bar = level1.castle.get_health_bar();
+            castleHpText.setPosition(bar.getPosition().x,
+                                     bar.getPosition().y - bar.getSize().y / 2.f - 5.f);
             window.draw(castleHpText);
         }
         else if (state == GameState::Defeat) {
