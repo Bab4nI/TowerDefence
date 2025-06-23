@@ -3,27 +3,32 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
-#define step 0.001f
-#define model_len 3
+#define step 0.01f
+#define model_len 0.000000001f
 
 namespace Level {
 
     class Castle{
     public:
-        Castle(int hp);
+        Castle(sf::Vector2f cords, int hp);
 
         int get_health();
+        sf::Sprite get_sprite();
         bool deal_damage(int damage);
 
     private:
         int health;
+        sf::Texture texture;
+        sf::Sprite sprite;
+        sf::Vector2f cords;
     };
-
+    
+    extern sf::Vector2f level1_castle_cords;
     extern std::vector<sf::Vector2f> level1_points_Bezier;
 
     class Level {
     public:
-        Level(std::vector<sf::Vector2f> points_Bezier, std::vector<sf::Vector2f> points, unsigned num, int castle_hp, int road_width);
+        Level(std::vector<sf::Vector2f> points_Bezier, std::vector<sf::Vector2f> _points, unsigned num, int castle_hp, int _road_width, sf::Vector2f castle_cords);
 
         // The second value indicates whether an enemy 
         //  has reached the end of the route

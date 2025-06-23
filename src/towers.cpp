@@ -67,8 +67,8 @@ Archer::Archer(sf::Vector2f crds) : Tower(crds)
 Wizzard::Wizzard(sf::Vector2f crds) : Tower(crds)
 {
     range = 250;
-    damage = 3;
-    damage_interval = 3;
+    damage = 1;
+    damage_interval = 0.5;
 
     if (!texture.loadFromFile("assets/images/wizzard_100.png"))
         throw std::runtime_error("Failed to load wizzard texture");

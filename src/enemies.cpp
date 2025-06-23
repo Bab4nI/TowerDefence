@@ -85,7 +85,7 @@ sf::Vector2f Enemy::get_cords(){
 Enemy::~Enemy() {}
 
 Goblin::Goblin(){
-    speed = 1;
+    speed = 5;
     health = 5;
     max_health = health;
     damage = 1;
@@ -109,12 +109,12 @@ bool Goblin::health_decrease(int hp) {
 }
 
 Orc::Orc(){
-    speed = 1;
+    speed = 3;
     health = 10;
     max_health = health;
     damage = 2;
     damage_interval = 1.5f;
-    if(!texture.loadFromFile("assets\\images\\or\xD1\x81_100.png"))
+    if(!texture.loadFromFile("assets\\images\\orc_100.png"))
             throw std::runtime_error("Failed to load orc texture.");
     else{
         sprite = sf::Sprite(texture);

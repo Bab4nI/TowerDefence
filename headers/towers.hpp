@@ -17,7 +17,7 @@ namespace Towers{
     protected:
         float range;
         int damage;
-        int damage_interval;
+        float damage_interval;
         sf::Clock damage_clock;
         sf::Vector2f cords;
         sf::Texture texture;

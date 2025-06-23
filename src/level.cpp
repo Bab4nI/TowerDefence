@@ -8,19 +8,33 @@
 */
 namespace Level {
 
-    Castle::Castle(int hp){
-        health = hp;
+    Castle::Castle(sf::Vector2f _cords, int hp){
+        if(!texture.loadFromFile("assets\\images\\castle_200.png"))
+            throw std::runtime_error("Failed to load castle texture.");
+        else{
+            sprite = sf::Sprite(texture);
+            sprite.setOrigin(sf::Vector2f(100, 100));
+            health = hp;
+            cords = _cords;
+            sprite.setPosition(_cords);
+        }
     }
     
     bool Castle::deal_damage(int damage){
         health -= damage;
-        return health < 0;
+        return health <= 0;
     }
 
     int Castle::get_health(){
         return health;
     }
     
+    sf::Sprite Castle::get_sprite(){
+        return sprite;
+    }
+
+    sf::Vector2f level1_castle_cords = sf::Vector2f(860, 910);
+
     std::vector<sf::Vector2f> level1_points_Bezier = {
         sf::Vector2f(1080, 630),
         sf::Vector2f(430, 870),
@@ -48,10 +62,10 @@ namespace Level {
         Here the initialization list is specifically used, 
             because of the field needs to be initialized as a class object.
     */
-    Level::Level(std::vector<sf::Vector2f> points_Bezier, std::vector<sf::Vector2f> _points, unsigned num, int castle_hp, int _road_width) :      
+    Level::Level(std::vector<sf::Vector2f> points_Bezier, std::vector<sf::Vector2f> _points, unsigned num, int castle_hp, int _road_width, sf::Vector2f castle_cords) :      
         road_width(_road_width),
         number(num),
-        castle(castle_hp),
+        castle(castle_cords, castle_hp),
         points(_points)
     {
         build_ban_map.resize(1024, std::vector<bool>(1024, true));
@@ -129,6 +143,10 @@ namespace Level {
                 cur_len += std::sqrt(dx * dx + dy * dy);
 
                 if (cur_len >= model_len) {
+                    
+                    curve.push_back(point);
+                    cur_len = 0;
+                    prev_point = point;
 
                     float u = 1.f - t;
                     sf::Vector2f tangent =
@@ -169,10 +187,6 @@ namespace Level {
                     prev_left = left_normal;
                     prev_right = right_normal;
                     has_prev_normals = true;
-
-                    curve.push_back(point);
-                    cur_len = 0;
-                    prev_point = point;
                 }
             }
 
@@ -184,19 +198,6 @@ namespace Level {
         }
     }
 
-    // void Level::route_calculation(std::vector<sf::Vector2f> points){
-    //     int length = points.size();
-
-    //     for(int i = 0; i < length - 1; i+=3){
-    //         sf::Vector2f p1 = points[i];
-    //         sf::Vector2f p2 = points[i + 1];
-    //         sf::Vector2f p3 = points[i + 2];
-    //         sf::Vector2f p4 = points[i + 3];
-
-    //         std::vector<sf::Vector2f> seg = computeBezierCurve(p1, p2, p3, p4);
-    //         route.insert(route.end(), seg.begin(), seg.end());
-    //     }
-    // }
 }; // namespace Level
 
 

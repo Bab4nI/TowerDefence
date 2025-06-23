@@ -10,7 +10,7 @@
 
 int main()
 {
-    Level::Level level1(Level::level1_points_Bezier, Level::level1_points_Bezier, 1, castle_hp, road_width);
+    Level::Level level1(Level::level1_points_Bezier, Level::level1_points_Bezier, 1, castle_hp, road_width, Level::level1_castle_cords);
 
     std::srand(static_cast<unsigned>(std::time(nullptr))); // seed for enemy selection
 
@@ -39,7 +39,7 @@ int main()
                         sf::Style::Titlebar | sf::Style::Close);
 
     sf::Texture BackgroundImage; 
-    if(!BackgroundImage.loadFromFile("assets\\images\\white_square.png"))
+    if(!BackgroundImage.loadFromFile("assets\\images\\background.png"))
         return EXIT_FAILURE;
     float coef = static_cast<float>(BackgroundImage.getSize().x);
     coef /= BackgroundImage.getSize().y;
@@ -85,16 +85,7 @@ int main()
     sf::Sprite defeat_sprite = sf::Sprite(defeat_screen);
     defeat_sprite.setColor(sf::Color(50, 0, 0, 128)); // 128 -> ~50% opacity
     
-    // 660 630
-    // 670 370
     std::vector<Towers::Tower*> towers;
-    // --------- hardcode for test ------------
-    sf::Vector2f test_cords = sf::Vector2f(660, 630);
-    towers.push_back(new Towers::Cannon(test_cords));
-    test_cords = sf::Vector2f(670, 370);
-    towers.push_back(new Towers::Cannon(test_cords));
-    // ----------------------------------------
-
 
     sf::RectangleShape shop_panel;
     shop_panel.setFillColor(sf::Color(0, 0, 0, 150));
@@ -131,11 +122,7 @@ int main()
         {
             if (event.type == sf::Event::Closed)
                 window.close();
-            // else if (event.type == sf::Event::Resized){
-            //     window_size = window.getSize();
-            //     window_size.x = window_size.y * coef;
-            //     window.setSize(window_size);
-            // }
+
             else if (event.type == sf::Event::MouseButtonPressed){
                 if(event.mouseButton.button == sf::Mouse::Left){
                     sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
@@ -222,11 +209,9 @@ int main()
 
             window.draw(BckgSprite);
 
-            //----------------------------
             window.draw(route_line);
             window.draw(left_road_line);
             window.draw(right_road_line);
-            //-------------------------
 
             for(Enemies::Enemy* enemy : enemies){
                 window.draw(enemy->get_sprite());
@@ -237,6 +222,8 @@ int main()
                 window.draw(tower->get_sprite());
             }
 
+            window.draw(level1.castle.get_sprite());
+            
             if(build_mode){
                 window.draw(build_sprite);
             }
