@@ -57,4 +57,16 @@ namespace Enemies{
         Goblin();
         bool health_decrease(int hp) override;
     };
+
+    class Orc: public Enemy{
+    public:
+        Orc();
+        bool health_decrease(int hp) override;
+    };
+
+    class Golem: public Enemy{
+    public:
+        Golem();
+        bool health_decrease(int hp) override;
+    };
 } // namespace Enemies

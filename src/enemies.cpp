@@ -107,3 +107,45 @@ bool Goblin::health_decrease(int hp) {
     update_health_bar();
     return(health <= 0);
 }
+
+Orc::Orc(){
+    speed = 1;
+    health = 10;
+    max_health = health;
+    damage = 2;
+    damage_interval = 1.5f;
+    if(!texture.loadFromFile("assets\\images\\or\xD1\x81_100.png"))
+            throw std::runtime_error("Failed to load orc texture.");
+    else{
+        sprite = sf::Sprite(texture);
+        sprite.setOrigin(sf::Vector2f(50, 50));
+        update_health_bar();
+    }
+}
+
+bool Orc::health_decrease(int hp) {
+    health -= hp;
+    update_health_bar();
+    return(health <= 0);
+}
+
+Golem::Golem(){
+    speed = 1;
+    health = 20;
+    max_health = health;
+    damage = 4;
+    damage_interval = 2.0f;
+    if(!texture.loadFromFile("assets\\images\\golem_100.png"))
+            throw std::runtime_error("Failed to load golem texture.");
+    else{
+        sprite = sf::Sprite(texture);
+        sprite.setOrigin(sf::Vector2f(50, 50));
+        update_health_bar();
+    }
+}
+
+bool Golem::health_decrease(int hp) {
+    health -= hp;
+    update_health_bar();
+    return(health <= 0);
+}

@@ -36,7 +36,7 @@ sf::Sprite Tower::get_sprite(){
 // virtual
 Tower::~Tower(){}
 
-Cannon::Cannon(sf::Vector2f crds) : Tower(crds) 
+Cannon::Cannon(sf::Vector2f crds) : Tower(crds)
 {
     range = 200;
     damage = 2;
@@ -45,6 +45,34 @@ Cannon::Cannon(sf::Vector2f crds) : Tower(crds)
     if (!texture.loadFromFile("assets/images/cannon_100.png"))
         throw std::runtime_error("Failed to load cannon texture");
     
+    sprite.setTexture(texture);
+    sprite.setOrigin(texture.getSize().x / 2.f, texture.getSize().y / 2.f);
+    sprite.setPosition(crds);
+}
+
+Archer::Archer(sf::Vector2f crds) : Tower(crds)
+{
+    range = 150;
+    damage = 1;
+    damage_interval = 1;
+
+    if (!texture.loadFromFile("assets/images/archer_100.png"))
+        throw std::runtime_error("Failed to load archer texture");
+
+    sprite.setTexture(texture);
+    sprite.setOrigin(texture.getSize().x / 2.f, texture.getSize().y / 2.f);
+    sprite.setPosition(crds);
+}
+
+Wizzard::Wizzard(sf::Vector2f crds) : Tower(crds)
+{
+    range = 250;
+    damage = 3;
+    damage_interval = 3;
+
+    if (!texture.loadFromFile("assets/images/wizzard_100.png"))
+        throw std::runtime_error("Failed to load wizzard texture");
+
     sprite.setTexture(texture);
     sprite.setOrigin(texture.getSize().x / 2.f, texture.getSize().y / 2.f);
     sprite.setPosition(crds);
