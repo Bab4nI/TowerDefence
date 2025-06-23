@@ -86,7 +86,7 @@ namespace Level {
     }
 
     std::pair<sf::Vector2f, bool> Level::get_cords(int cur_step) {
-        if (cur_step <static_cast<int>(route.size())) {
+        if (cur_step < static_cast<int>(route.size())) {
             return std::make_pair(route[cur_step], false);
         } 
         else {

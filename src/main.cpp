@@ -26,7 +26,7 @@ int main()
     sf::Font font;
     if (!font.loadFromFile("assets/fonts/AGENCYB.TTF")) return EXIT_FAILURE;
 
-    sf::Text castleHpText("", font, 20);
+    sf::Text castleHpText("", font, 30);
     castleHpText.setFillColor(sf::Color::Red);
 
     sf::VertexArray route_line(sf::LineStrip, level1.get_route_length());
@@ -207,7 +207,7 @@ int main()
             castleHpText.setString(std::to_string(hp) + " HP");
             auto bounds = castleHpText.getLocalBounds();
             castleHpText.setOrigin(bounds.left + bounds.width, bounds.top + bounds.height);
-            castleHpText.setPosition(window.getSize().x - 5.f, window.getSize().y - 5.f);
+            castleHpText.setPosition(window.getSize().x - 10.0f, window.getSize().y - 30.0f);
             window.draw(castleHpText);
         }
         else if (state == GameState::Defeat) {

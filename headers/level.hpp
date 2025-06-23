@@ -3,8 +3,8 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
-#define step 0.01f
-#define model_len 0.000000001f
+#define step 0.0005f
+#define model_len 0.0005f
 
 namespace Level {
 
