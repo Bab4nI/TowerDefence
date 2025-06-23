@@ -2,6 +2,8 @@
 #include "level.hpp"
 #include "enemies.hpp"
 #include "towers.hpp"
+#include <cstdlib>
+#include <ctime>
 
 #define castle_hp 10
 #define road_width 30
@@ -9,6 +11,8 @@
 int main()
 {
     Level::Level level1(Level::level1_points_Bezier, Level::level1_points_Bezier, 1, castle_hp, road_width);
+
+    std::srand(static_cast<unsigned>(std::time(nullptr))); // seed for enemy selection
 
     // Convert the route to a vertex array so that it can be drawn using SFML.
     sf::VertexArray route_line(sf::LineStrip, level1.get_route_length());
@@ -102,6 +106,21 @@ int main()
     sf::Sprite cannon_icon(cannon_icon_texture);
     cannon_icon.setPosition(10.f, 10.f);
 
+    sf::Texture archer_icon_texture;
+    if(!archer_icon_texture.loadFromFile("assets\\images\\archer_100.png"))
+        return EXIT_FAILURE;
+    sf::Sprite archer_icon(archer_icon_texture);
+    archer_icon.setPosition(120.f, 10.f);
+
+    sf::Texture wizzard_icon_texture;
+    if(!wizzard_icon_texture.loadFromFile("assets\\images\\wizzard_100.png"))
+        return EXIT_FAILURE;
+    sf::Sprite wizzard_icon(wizzard_icon_texture);
+    wizzard_icon.setPosition(230.f, 10.f);
+
+    enum class TowerType { Cannon, Archer, Wizzard };
+    TowerType build_type = TowerType::Cannon;
+
     bool build_mode = false;
     sf::Sprite build_sprite;
 
@@ -122,13 +141,29 @@ int main()
                     sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
                     if(build_mode){
                         if(level1.is_build_allowed(mousePos)){
-                            towers.push_back(new Towers::Cannon(mousePos));
+                            if(build_type == TowerType::Cannon)
+                                towers.push_back(new Towers::Cannon(mousePos));
+                            else if(build_type == TowerType::Archer)
+                                towers.push_back(new Towers::Archer(mousePos));
+                            else if(build_type == TowerType::Wizzard)
+                                towers.push_back(new Towers::Wizzard(mousePos));
                             build_mode = false;
                         }
                     }else if(cannon_icon.getGlobalBounds().contains(mousePos)){
                         build_mode = true;
+                        build_type = TowerType::Cannon;
                         build_sprite.setTexture(cannon_icon_texture);
                         build_sprite.setOrigin(cannon_icon_texture.getSize().x / 2.f, cannon_icon_texture.getSize().y / 2.f);
+                    }else if(archer_icon.getGlobalBounds().contains(mousePos)){
+                        build_mode = true;
+                        build_type = TowerType::Archer;
+                        build_sprite.setTexture(archer_icon_texture);
+                        build_sprite.setOrigin(archer_icon_texture.getSize().x / 2.f, archer_icon_texture.getSize().y / 2.f);
+                    }else if(wizzard_icon.getGlobalBounds().contains(mousePos)){
+                        build_mode = true;
+                        build_type = TowerType::Wizzard;
+                        build_sprite.setTexture(wizzard_icon_texture);
+                        build_sprite.setOrigin(wizzard_icon_texture.getSize().x / 2.f, wizzard_icon_texture.getSize().y / 2.f);
                     }
                 }
                 else if(event.mouseButton.button == sf::Mouse::Right){
@@ -151,7 +186,13 @@ int main()
 
         if(!castle_is_destroyed){
             if (spawn_clock.getElapsedTime().asSeconds() >= spawn_interval){
-                enemies.push_back(new Enemies::Goblin());
+                int type = std::rand() % 3;
+                if(type == 0)
+                    enemies.push_back(new Enemies::Goblin());
+                else if(type == 1)
+                    enemies.push_back(new Enemies::Orc());
+                else
+                    enemies.push_back(new Enemies::Golem());
                 spawn_clock.restart();
             }
             if(move_clock.getElapsedTime().asSeconds() >= move_interval){
@@ -202,6 +243,8 @@ int main()
 
             window.draw(shop_panel);
             window.draw(cannon_icon);
+            window.draw(archer_icon);
+            window.draw(wizzard_icon);
 
             window.draw(castle_hp_text);
         }

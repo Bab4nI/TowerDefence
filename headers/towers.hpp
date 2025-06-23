@@ -28,4 +28,14 @@ namespace Towers{
     public:
         Cannon(sf::Vector2f crds);
     };
+
+    class Archer : public Tower{
+    public:
+        Archer(sf::Vector2f crds);
+    };
+
+    class Wizzard : public Tower{
+    public:
+        Wizzard(sf::Vector2f crds);
+    };
 } // namespace Towers
