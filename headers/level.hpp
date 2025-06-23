@@ -8,20 +8,24 @@
 
 namespace Level {
 
-    class Castle{
-    public:
-        Castle(sf::Vector2f cords, int hp);
+class Castle{
+public:
+    Castle(sf::Vector2f cords, int hp);
 
-        int get_health();
-        sf::Sprite get_sprite();
-        bool deal_damage(int damage);
+    int get_health();
+    sf::Sprite get_sprite();
+    sf::RectangleShape get_health_bar();
+    void update_health_bar();
+    bool deal_damage(int damage);
 
-    private:
-        int health;
-        sf::Texture texture;
-        sf::Sprite sprite;
-        sf::Vector2f cords;
-    };
+private:
+    int health;
+    int max_health;
+    sf::Texture texture;
+    sf::Sprite sprite;
+    sf::RectangleShape health_bar;
+    sf::Vector2f cords;
+};
     
     extern sf::Vector2f level1_castle_cords;
     extern std::vector<sf::Vector2f> level1_points_Bezier;

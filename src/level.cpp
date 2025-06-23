@@ -15,13 +15,16 @@ namespace Level {
             sprite = sf::Sprite(texture);
             sprite.setOrigin(sf::Vector2f(100, 100));
             health = hp;
+            max_health = hp;
             cords = _cords;
             sprite.setPosition(_cords);
+            update_health_bar();
         }
     }
     
     bool Castle::deal_damage(int damage){
         health -= damage;
+        update_health_bar();
         return health <= 0;
     }
 
@@ -31,6 +34,22 @@ namespace Level {
     
     sf::Sprite Castle::get_sprite(){
         return sprite;
+    }
+
+    sf::RectangleShape Castle::get_health_bar(){
+        return health_bar;
+    }
+
+    void Castle::update_health_bar(){
+        if(max_health){
+            float percentage = static_cast<float>(health) / static_cast<float>(max_health);
+            float width = sprite.getGlobalBounds().width;
+            float height = 10.f;
+            health_bar.setSize(sf::Vector2f(width * percentage, height));
+            health_bar.setFillColor(percentage < 0.3f ? sf::Color::Red : sf::Color::Green);
+            health_bar.setOrigin(width / 2.f, height / 2.f);
+            health_bar.setPosition(cords.x, cords.y - sprite.getGlobalBounds().height / 2.f - 15.f);
+        }
     }
 
     sf::Vector2f level1_castle_cords = sf::Vector2f(860, 910);
