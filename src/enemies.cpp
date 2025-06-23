@@ -86,7 +86,7 @@ Enemy::~Enemy() {}
 
 Goblin::Goblin(){
     speed = 5;
-    health = 5;
+    health = 20;
     max_health = health;
     damage = 1;
     damage_interval = 1.0f;
@@ -110,7 +110,7 @@ bool Goblin::health_decrease(int hp) {
 
 Orc::Orc(){
     speed = 3;
-    health = 10;
+    health = 30;
     max_health = health;
     damage = 2;
     damage_interval = 1.5f;
@@ -130,8 +130,8 @@ bool Orc::health_decrease(int hp) {
 }
 
 Golem::Golem(){
-    speed = 1;
-    health = 20;
+    speed = 2;
+    health = 50;
     max_health = health;
     damage = 4;
     damage_interval = 2.0f;

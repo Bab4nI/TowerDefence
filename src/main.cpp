@@ -26,7 +26,7 @@ int main()
     sf::Font font;
     if (!font.loadFromFile("assets/fonts/AGENCYB.TTF")) return EXIT_FAILURE;
 
-    sf::Text castleHpText("", font, 30);
+    sf::Text castleHpText("", font, 20);
     castleHpText.setFillColor(sf::Color::Red);
 
     sf::VertexArray route_line(sf::LineStrip, level1.get_route_length());
@@ -180,7 +180,7 @@ int main()
                 spawnClock.restart();
             }
             if (moveClock.getElapsedTime().asSeconds() >= moveInterval) {
-                for (auto* e : enemies) castleDestroyed = e->tick(level1);
+                for (auto* e : enemies) castleDestroyed = (castleDestroyed || e->tick(level1));
                 for (auto* t : towers) t->tick(enemies);
                 moveClock.restart();
             }
@@ -207,8 +207,10 @@ int main()
             int hp = level1.castle.get_health();
             castleHpText.setString(std::to_string(hp) + " HP");
             auto bounds = castleHpText.getLocalBounds();
-            castleHpText.setOrigin(bounds.left + bounds.width, bounds.top + bounds.height);
-            castleHpText.setPosition(window.getSize().x - 5.f, window.getSize().y - 5.f);
+            castleHpText.setOrigin(bounds.left + bounds.width / 2.f, bounds.top + bounds.height / 2.f);
+            sf::RectangleShape bar = level1.castle.get_health_bar();
+            castleHpText.setPosition(bar.getPosition().x,
+                                     bar.getPosition().y - bar.getSize().y / 2.f - 10.f);
             window.draw(castleHpText);
         }
         else if (state == GameState::Defeat) {
